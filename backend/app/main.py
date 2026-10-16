@@ -1,12 +1,17 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.tickets import router as tickets_router
+
 
 app = FastAPI(
     title="ResolveOps AI API",
     description="Multi-Agent Support Investigation Platform",
     version="0.1.0",
 )
+
+
+app.include_router(tickets_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +22,8 @@ app.add_middleware(
 )
 
 
+
+
 @app.get("/health")
 async def health_check():
     return {
@@ -24,3 +31,6 @@ async def health_check():
         "service": "resolveops-api",
         "version": "0.1.0",
     }
+
+
+

@@ -1,49 +1,72 @@
-
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.models.order import Order, Ticket
-from app.schemas.ticket import TicketCreate, TicketResponse
+from app.schemas.ticket import (
+    TicketCreate,
+    TicketResponse,
+    TicketDetailResponse,
+)
+from app.services import order_service, ticket_service
 
 
-router = APIRouter(prefix="/api/tickets", tags=["Tickets"])
+# Tickets ke sabhi API endpoints ka common prefix.
+router = APIRouter(
+    prefix="/api/tickets",
+    tags=["Tickets"],
+)
 
 
-@router.post("", response_model=TicketResponse, status_code=status.HTTP_201_CREATED)
-async def create_ticket(payload: TicketCreate, db: AsyncSession = Depends(get_db)):
-    # Step 1: Check karo ki jis Order par ticket ban raha hai, wo order database me hai ya nahi
-    order = await db.get(Order, payload.order_id)
-    if order is None:
-        raise HTTPException(status_code=404, detail="Order not found")
-
-    # Step 2: Payload (Pydantic) data ko dict me convert karke SQLAlchemy Ticket object banao
-    ticket = Ticket(**payload.model_dump())
-    db.add(ticket) # Database session me add karo
-
-    # Step 3: Asliyat me database me save karo (commit) aur nayi ID fetch karo (refresh)
-    await db.commit()
-    await db.refresh(ticket)
-    return ticket
-
-@router.get("", response_model=list[TicketResponse])
-async def list_tickets(db: AsyncSession = Depends(get_db)):
-    # Database se latest 100 tickets uthao (descending order by ID)
-    result = await db.execute(
-        select(Ticket).order_by(Ticket.id.desc()).limit(100)
+# Naya ticket create karo (201 Created).
+@router.post(
+    "",
+    response_model=TicketResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_ticket(
+    payload: TicketCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    # Ticket create karne se pehle Order exist karta hai ya nahi check karo.
+    order = await order_service.get_order_by_id(
+        db, payload.order_id
     )
-    # result.scalars().all() list format me data wapas karta hai
-    return result.scalars().all()
+
+    if order is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Order not found",
+        )
+
+    # Ticket creation logic Service Layer mein handle hoga.
+    return await ticket_service.create_ticket(db, payload)
 
 
-@router.get("/{ticket_id}", response_model=TicketResponse)
-async def get_ticket(ticket_id: int, db: AsyncSession = Depends(get_db)):
-    # Database se sirf wo ek ticket fetch karo
-    ticket = await db.get(Ticket, ticket_id)
+# Latest tickets fetch karo.
+@router.get("", response_model=list[TicketResponse])
+async def list_tickets(
+    db: AsyncSession = Depends(get_db),
+):
+    return await ticket_service.list_tickets(db)
 
-    # Agar ticket nahi mila, to 404 Error do
+
+# Ticket ID se complete details (Order, Payment, Shipment) fetch karo.
+@router.get(
+    "/{ticket_id}",
+    response_model=TicketDetailResponse,
+)
+async def get_ticket(
+    ticket_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    ticket = await ticket_service.get_ticket_details(
+        db, ticket_id
+    )
+
     if ticket is None:
-        raise HTTPException(status_code=404, detail="Ticket not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Ticket not found",
+        )
 
     return ticket

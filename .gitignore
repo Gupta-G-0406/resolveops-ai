@@ -1,6 +1,53 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Secrets
 .env
+.env.*
+!.env.example
+
+# Node / frontend
 node_modules/
 dist/
+coverage/
+.vite/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local logs and databases
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+
+# ChromaDB
+backend/data/chroma/
+chroma_db/
+chroma_data/
+chroma_storage/
+
+# Temporary and backup files
+*.tmp
+*.bak
+*_backup.py
+*_before_*.py
+*_broken_backup.py
+*_day*_part*.py
+*_worker_backup.py
+
+# Coverage
+.coverage
+htmlcov/

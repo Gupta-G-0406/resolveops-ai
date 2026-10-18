@@ -1,0 +1,109 @@
+ .gitignore                                         |   44 [32m+[m[31m-[m
+ README.md                                          |  219 [32m+++[m
+ backend/alembic/env.py                             |    1 [32m+[m
+ ...2a5_add_investigation_heartbeat_lease_fields.py |   40 [32m+[m
+ ...6a20_add_investigation_runs_and_audit_events.py |   62 [32m+[m
+ backend/app/agents/__init__.py                     |    0
+ backend/app/agents/order_investigation.py          |  101 [32m++[m
+ backend/app/agents/supervisor.py                   |  324 [32m++++[m
+ backend/app/api/investigations.py                  |  357 [32m++++[m
+ backend/app/api/orders.py                          |   40 [32m+[m
+ backend/app/api/tickets.py                         |   85 [32m+[m[31m-[m
+ backend/app/core/log_security.py                   |   45 [32m+[m
+ backend/app/core/logging_config.py                 |   92 [32m+[m
+ backend/app/core/request_logging.py                |   67 [32m+[m
+ backend/app/db/session.py                          |  180 [32m+[m[31m-[m
+ backend/app/main.py                                |  145 [32m+[m[31m-[m
+ backend/app/mcp/__init__.py                        |    0
+ backend/app/mcp/client_tools.py                    |  635 [32m+++++++[m
+ backend/app/mcp/correlation.py                     |   31 [32m+[m
+ backend/app/mcp/observability.py                   |   96 [32m++[m
+ backend/app/mcp/server.py                          |  320 [32m++++[m
+ backend/app/models/__init__.py                     |    2 [32m+[m[31m-[m
+ backend/app/models/investigation.py                |  143 [32m++[m
+ backend/app/models/order.py                        |  111 [32m+[m[31m-[m
+ backend/app/rag/__init__.py                        |    0
+ backend/app/rag/policy_store.py                    |  315 [32m++++[m
+ backend/app/schemas/investigation.py               |  100 [32m++[m
+ backend/app/schemas/order.py                       |  164 [32m++[m
+ backend/app/schemas/ticket.py                      |  128 [32m+[m[31m-[m
+ backend/app/services/__init__.py                   |    0
+ backend/app/services/investigation_heartbeat.py    |  116 [32m++[m
+ backend/app/services/investigation_repository.py   |  540 [32m++++++[m
+ backend/app/services/investigation_service.py      |  135 [32m++[m
+ backend/app/services/order_service.py              |   54 [32m+[m
+ backend/app/services/ticket_service.py             |   58 [32m+[m
+ backend/app/workers/__init__.py                    |    0
+ .../app/workers/investigation_recovery_worker.py   |  137 [32m++[m
+ .../data_level0.bin                                |  Bin [31m0[m -> [32m167600[m bytes
+ .../header.bin                                     |  Bin [31m0[m -> [32m100[m bytes
+ .../length.bin                                     |  Bin [31m0[m -> [32m400[m bytes
+ .../link_lists.bin                                 |    0
+ backend/data/policies/demo_policies.json           |   27 [32m+[m
+ backend/scripts/__init__.py                        |    0
+ backend/scripts/check_policy_readiness.py          |   52 [32m+[m
+ backend/scripts/ingest_policies.py                 |   39 [32m+[m
+ backend/scripts/seed.py                            |  139 [32m++[m
+ backend/scripts/test_concurrent_investigations.py  |   76 [32m+[m
+ backend/scripts/test_investigation.py              |   59 [32m+[m
+ backend/scripts/test_mcp.py                        |   65 [32m+[m
+ backend/scripts/test_mcp_tracing.py                |   44 [32m+[m
+ backend/scripts/test_policy_mcp.py                 |   34 [32m+[m
+ backend/scripts/test_policy_search.py              |   31 [32m+[m
+ backend/scripts/test_policy_subprocess.py          |   34 [32m+[m
+ backend/scripts/test_supervisor.py                 |   61 [32m+[m
+ backend/scripts/verify_mcp_correlation.py          |   50 [32m+[m
+ .../tests/test_investigation_error_propagation.py  |  137 [32m++[m
+ backend/tests/test_investigation_heartbeat.py      |   97 [32m++[m
+ backend/tests/test_investigation_history_api.py    |  248 [32m+++[m
+ backend/tests/test_investigation_lease.py          |  106 [32m++[m
+ .../tests/test_investigation_lease_integration.py  |  670 [32m++++++++[m
+ .../tests/test_investigation_owned_finalization.py |  139 [32m++[m
+ .../tests/test_investigation_recovery_worker.py    |  101 [32m++[m
+ backend/tests/test_investigation_stats_api.py      |  194 [32m+++[m
+ backend/tests/test_json_logging.py                 |   75 [32m+[m
+ backend/tests/test_log_rotation.py                 |   42 [32m+[m
+ backend/tests/test_log_security.py                 |  130 [32m++[m
+ backend/tests/test_mcp_call_cancellation.py        |   44 [32m+[m
+ backend/tests/test_mcp_correlation.py              |  111 [32m++[m
+ backend/tests/test_mcp_error_handlers.py           |   92 [32m+[m
+ backend/tests/test_mcp_health_readiness.py         |  116 [32m++[m
+ backend/tests/test_mcp_metrics.py                  |   58 [32m+[m
+ backend/tests/test_mcp_observability.py            |  113 [32m++[m
+ backend/tests/test_mcp_reliability.py              |  173 [32m++[m
+ backend/tests/test_mcp_server_correlation.py       |   48 [32m+[m
+ backend/tests/test_mcp_worker.py                   |  490 [32m++++++[m
+ backend/tests/test_policy_readiness.py             |   27 [32m+[m
+ backend/tests/test_policy_readiness_recovery.py    |   85 [32m+[m
+ backend/tests/test_policy_search_recovery.py       |   84 [32m+[m
+ backend/tests/test_policy_store_concurrency.py     |  115 [32m++[m
+ backend/tests/test_request_logging.py              |   97 [32m++[m
+ frontend/.gitignore                                |   24 [32m+[m
+ frontend/.oxlintrc.json                            |    8 [32m+[m
+ frontend/README.md                                 |   32 [32m+[m
+ frontend/index.html                                |   13 [32m+[m
+ frontend/package-lock.json                         | 1756 [32m++++++++++++++++++++[m
+ frontend/package.json                              |   27 [32m+[m
+ frontend/public/favicon.svg                        |    1 [32m+[m
+ frontend/public/icons.svg                          |   24 [32m+[m
+ frontend/src/App.css                               | 1722 [32m+++++++++++++++++++[m
+ frontend/src/App.tsx                               |  454 [32m+++++[m
+ frontend/src/assets/hero.png                       |  Bin [31m0[m -> [32m13057[m bytes
+ frontend/src/assets/react.svg                      |    1 [32m+[m
+ frontend/src/assets/vite.svg                       |    1 [32m+[m
+ .../src/components/GlobalInvestigationHistory.tsx  |  535 [32m++++++[m
+ frontend/src/components/InvestigationHistory.tsx   |  352 [32m++++[m
+ frontend/src/components/TicketDetail.tsx           |  363 [32m++++[m
+ frontend/src/index.css                             |   74 [32m+[m
+ frontend/src/main.tsx                              |   10 [32m+[m
+ frontend/src/services/api.ts                       |   44 [32m+[m
+ frontend/src/services/investigationApi.ts          |  126 [32m++[m
+ frontend/src/types/index.ts                        |   54 [32m+[m
+ frontend/src/types/investigation.ts                |   56 [32m+[m
+ frontend/tsconfig.app.json                         |   26 [32m+[m
+ frontend/tsconfig.json                             |    7 [32m+[m
+ frontend/tsconfig.node.json                        |   23 [32m+[m
+ frontend/vite.config.ts                            |    8 [32m+[m
+ resolveops_before_lease.dump                       |  Bin [31m0[m -> [32m25399[m bytes
+ "ts and request correlation logging\357\200\242"   |   41 [32m+[m
+ 108 files changed, 14882 insertions(+), 90 deletions(-)

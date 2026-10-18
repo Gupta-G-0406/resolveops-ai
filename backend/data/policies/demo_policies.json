@@ -1,0 +1,27 @@
+
+[
+  {
+    "id": "POL-DELIVERY-001",
+    "title": "Delivered But Not Received",
+    "category": "delivery",
+    "content": "When a customer reports that an order is marked delivered but has not been received, the support team must verify the shipment status and request proof of delivery from the carrier. If proof of delivery is unavailable, the case must be escalated for a missing-package investigation. A replacement or refund must not be executed until eligibility is confirmed under the applicable resolution policy and any required approval is obtained."
+  },
+  {
+    "id": "POL-REFUND-001",
+    "title": "Cancelled Order Refund Review",
+    "category": "refund",
+    "content": "When an order is cancelled after payment capture, the support team must verify the cancellation status and consult the payment gateway or refund ledger. A paid payment status alone does not establish whether a refund was initiated or completed. If no refund record is found in the authoritative refund system, the case may be submitted for refund eligibility review. Refund execution requires applicable policy checks and authorization."
+  },
+  {
+    "id": "POL-PAYMENT-001",
+    "title": "Duplicate Payment Investigation",
+    "category": "payment",
+    "content": "When a customer reports duplicate payment, the support team must inspect payment transaction records and gateway references. Two charges must be independently verified before classifying a payment as duplicated. A single paid payment record is insufficient evidence of duplicate charging. Any reversal or refund requires verification and approval."
+  },
+  {
+    "id": "POL-SHIPMENT-001",
+    "title": "Delayed Shipment",
+    "category": "shipment",
+    "content": "For delayed shipments, verify the latest carrier status and expected delivery information. Do not invent a delivery date. If reliable tracking information is unavailable, request an update from the fulfillment or carrier team and communicate the uncertainty to the customer."
+  }
+]

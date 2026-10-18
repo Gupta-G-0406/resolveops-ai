@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.db.base import Base
 import app.models  # Yeh zaroori hai taaki Alembic saare models padh sake (noqa: F401 error chupanane ke liye hai)
 
+target_metadata = Base.metadata
 # Alembic ka config object (.ini file padhne ke liye)
 config = context.config
 

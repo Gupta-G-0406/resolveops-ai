@@ -72,3 +72,118 @@ select:focus-visible {
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+.investigation-report {
+  color: #dbe5f2;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.investigation-report h1,
+.investigation-report h2,
+.investigation-report h3 {
+  color: #f8fafc;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  line-height: 1.4;
+}
+
+.investigation-report h1 { font-size: 22px; }
+.investigation-report h2 { font-size: 18px; }
+.investigation-report h3 { font-size: 15px; }
+
+.investigation-report p {
+  margin: 10px 0;
+}
+
+.investigation-report strong {
+  color: #f8fafc;
+  font-weight: 650;
+}
+
+.investigation-report ul,
+.investigation-report ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.investigation-report ul { list-style: disc; }
+.investigation-report ol { list-style: decimal; }
+
+.investigation-report li {
+  margin: 7px 0;
+  padding-left: 4px;
+}
+
+.investigation-report table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.investigation-report th,
+.investigation-report td {
+  padding: 12px;
+  border: 1px solid #334155;
+  text-align: left;
+  vertical-align: top;
+}
+
+.investigation-report th {
+  background: #1e293b;
+  color: #f8fafc;
+  font-weight: 650;
+}
+
+.investigation-report tr:nth-child(even) {
+  background: #0f172a;
+}
+
+.investigation-report code {
+  background: #1e293b;
+  color: #93c5fd;
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 12px;
+}
+
+.investigation-report pre {
+  padding: 14px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #0f172a;
+}
+
+.investigation-report pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.investigation-report blockquote {
+  border-left: 3px solid #38bdf8;
+  padding-left: 14px;
+  color: #94a3b8;
+}
+
+.investigation-report a {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+
+.ops-report-content:has(.investigation-report) {
+    white-space: normal;
+}
+
+.ops-report-content .investigation-report {
+    color: #e2e8f0;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.ops-report-content .investigation-report table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}

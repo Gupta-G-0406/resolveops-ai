@@ -5,6 +5,7 @@ import {
     getInvestigationHistory,
     getInvestigationAuditEvents,
 } from "../services/investigationApi";
+import InvestigationReport from "./InvestigationReport";
 
 import type {
     AuditEvent,
@@ -172,8 +173,15 @@ function InvestigationCard({
                 <div className="ops-history-details">
                     <section className="ops-detail-section">
                         <h4>AI Investigation Report</h4>
+
                         <div className="ops-report-content">
-                            {investigation.report || "No report available"}
+                            {investigation.report ? (
+                                <InvestigationReport report={investigation.report} />
+                            ) : (
+                                <p className="ops-history-empty">
+                                    No report available
+                                </p>
+                            )}
                         </div>
                     </section>
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { api } from "../services/api";
 import type { TicketDetail as TicketDetailType, InvestigationResponse, } from "../types";
+import InvestigationReport from "./InvestigationReport";
 import InvestigationHistory from "../components/InvestigationHistory";
 interface Props {
     ticketId: number;
@@ -316,9 +317,7 @@ export default function TicketDetail({
                                 Multi-Agent Investigation Report
                             </h4>
 
-                            <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-slate-700">
-                                {investigation.report}
-                            </pre>
+                            <InvestigationReport report={investigation.report} />
                         </div>
 
                         <p className="text-xs text-slate-500">

@@ -6,6 +6,7 @@ import {
     getInvestigationAuditEvents,
     getInvestigationDetail,
 } from "../services/investigationApi";
+import InvestigationReport from "./InvestigationReport";
 
 import type {
     AuditEvent,
@@ -201,8 +202,15 @@ function InvestigationDetails({
 
                     <section className="ops-detail-section">
                         <h4>AI Investigation Report</h4>
+
                         <div className="ops-report-content">
-                            {detail.report ?? "No report available"}
+                            {detail.report ? (
+                                <InvestigationReport report={detail.report} />
+                            ) : (
+                                <p className="ops-history-empty">
+                                    No report available
+                                </p>
+                            )}
                         </div>
                     </section>
 

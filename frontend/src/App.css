@@ -1720,3 +1720,7 @@
     min-width: 680px;
   }
 }
+
+.ops-nav a {
+  text-decoration: none;
+}

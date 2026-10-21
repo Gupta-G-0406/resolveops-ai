@@ -10,7 +10,8 @@ from httpx import ASGITransport, AsyncClient
 
 from app.main import app
 from app.db.session import get_db
-
+from app.core.auth import get_current_user
+from tests.rbac_test_helpers import override_current_user
 
 NOW = datetime.now(timezone.utc)
 
@@ -34,11 +35,15 @@ def fake_run():
 
 @pytest_asyncio.fixture
 async def api_client():
-    """Create an async HTTP client with mocked DB dependency."""
+    """Authenticated API client with mocked DB dependency."""
+
     async def override_get_db():
         yield object()
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = (
+        override_current_user
+    )
 
     try:
         transport = ASGITransport(app=app)
@@ -51,7 +56,7 @@ async def api_client():
 
     finally:
         app.dependency_overrides.pop(get_db, None)
-
+        app.dependency_overrides.pop(get_current_user, None)
 
 @pytest.mark.asyncio
 async def test_list_investigations(api_client, fake_run):

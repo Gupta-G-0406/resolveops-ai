@@ -4,12 +4,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
 from app.schemas.order import OrderResponse
 from app.services import order_service
-
+from app.core.permissions import require_roles
+from app.models.user import UserRole
 
 # Orders ke sabhi API endpoints ka common prefix.
 router = APIRouter(
     prefix="/api/orders",
     tags=["Orders"],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
 
 

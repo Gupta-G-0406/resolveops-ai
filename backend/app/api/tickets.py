@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.core.permissions import require_roles
+from app.models.user import UserRole
 from app.db.session import get_db
 from app.schemas.ticket import (
     TicketCreate,
@@ -14,6 +15,16 @@ from app.services import order_service, ticket_service
 router = APIRouter(
     prefix="/api/tickets",
     tags=["Tickets"],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
 
 
@@ -22,6 +33,15 @@ router = APIRouter(
     "",
     response_model=TicketResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+            )
+        )
+    ],
 )
 async def create_ticket(
     payload: TicketCreate,

@@ -13,15 +13,20 @@ from app.services.investigation_repository import (
     get_investigation_stats,
 )
 
+from app.core.auth import get_current_user
+from tests.rbac_test_helpers import override_current_user
 
 @pytest_asyncio.fixture
 async def api_client():
-    """Create an API client without connecting to PostgreSQL."""
+    """Authenticated API client without PostgreSQL access."""
 
     async def override_get_db():
         yield object()
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = (
+        override_current_user
+    )
 
     try:
         transport = ASGITransport(app=app)
@@ -34,7 +39,7 @@ async def api_client():
 
     finally:
         app.dependency_overrides.pop(get_db, None)
-
+        app.dependency_overrides.pop(get_current_user, None)
 
 @pytest.mark.asyncio
 async def test_stats_api_success(api_client):

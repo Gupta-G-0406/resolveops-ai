@@ -10,7 +10,8 @@ from app.mcp.client_tools import (
     MCPConnectionError,
     MCPToolError,
 )
-
+from app.core.auth import get_current_user
+from tests.rbac_test_helpers import override_current_user
 
 # Mock database session.
 fake_db = AsyncMock()
@@ -36,7 +37,9 @@ def run_failure_test(exception, expected_status, expected_code):
     fake_db.reset_mock()
 
     app.dependency_overrides[get_db] = override_get_db
-
+    app.dependency_overrides[get_current_user] = (
+        override_current_user
+    )
     try:
         with (
             patch(
@@ -118,7 +121,8 @@ def run_failure_test(exception, expected_status, expected_code):
             assert acquired_worker_id
 
     finally:
-        app.dependency_overrides.clear()
+        app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(get_current_user, None)
 
 
 def test_investigation_mcp_connection_failure():

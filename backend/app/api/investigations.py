@@ -9,7 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException , Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-
+from app.core.permissions import require_roles
+from app.models.user import UserRole
 from app.schemas.investigation import (
     InvestigationResponse,
     InvestigationHistoryItem,
@@ -32,8 +33,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix="/api/tickets",
     tags=["Investigations"],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
-
 
 # ============================================================
 # Run AI Investigation
@@ -43,6 +53,15 @@ router = APIRouter(
 @router.post(
     "/{ticket_id}/investigate",
     response_model=InvestigationResponse,
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+            )
+        )
+    ],
 )
 async def investigate_ticket(
     ticket_id: int,
@@ -237,6 +256,16 @@ async def get_investigation_history(
 history_router = APIRouter(
     prefix="/api/investigations",
     tags=["Investigation History"],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.SUPPORT_AGENT,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
 
 
@@ -286,6 +315,15 @@ async def get_investigation_stats(
 @history_router.get(
     "/stale",
     response_model=list[InvestigationHistoryItem],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
 async def get_stale_investigations(
     timeout_minutes: int = Query(
@@ -330,6 +368,15 @@ async def get_investigation_detail(
 @history_router.get(
     "/{investigation_id}/audit-events",
     response_model=list[AuditEventResponse],
+    dependencies=[
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.SUPERVISOR,
+                UserRole.AUDITOR,
+            )
+        )
+    ],
 )
 async def get_investigation_audit_events(
     investigation_id: int,

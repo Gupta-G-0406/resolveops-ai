@@ -2,8 +2,7 @@ import hashlib
 import hmac
 import math
 from datetime import datetime, timedelta, timezone
-
-from sqlalchemy import func, select, text
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -104,37 +103,39 @@ async def check_login_rate_limit(
     client_attempts = client_result.scalars().all()
 
     # Find the most recent successful login for this account.
+        # Latest successful attempt establishes the reset boundary.
     last_success_result = await db.execute(
-        select(func.max(LoginAttempt.created_at))
+        select(LoginAttempt.id)
         .where(
             LoginAttempt.account_key == account_key,
             LoginAttempt.succeeded.is_(True),
         )
+        .order_by(LoginAttempt.id.desc())
+        .limit(1)
     )
 
-    last_success_at = last_success_result.scalar_one_or_none()
+    last_success_id = last_success_result.scalar_one_or_none()
 
-    # Only failures after the latest success count toward lockout.
-    account_window_start = window_start
+    # Count only failures within the active time window.
+    account_conditions = [
+        LoginAttempt.account_key == account_key,
+        LoginAttempt.succeeded.is_(False),
+        LoginAttempt.created_at > window_start,
+    ]
 
-    if last_success_at is not None:
-        account_window_start = max(
-            window_start,
-            last_success_at,
+    # Ignore failures recorded before the latest success.
+    if last_success_id is not None:
+        account_conditions.append(
+            LoginAttempt.id > last_success_id
         )
-    # Get timestamps for failed account attempts.
+
     account_result = await db.execute(
         select(LoginAttempt.created_at)
-        .where(
-            LoginAttempt.account_key == account_key,
-            LoginAttempt.succeeded.is_(False),
-            LoginAttempt.created_at > account_window_start,
-        )
+        .where(*account_conditions)
         .order_by(LoginAttempt.created_at.asc())
     )
 
     account_failures = account_result.scalars().all()
-
     retry_after_values = []
 
     if len(client_attempts) >= settings.login_rate_limit_client_max:

@@ -1,5 +1,6 @@
 import pytest
-
+import httpx
+from app.core.config import settings
 from tests.test_auth_api_integration import (
     auth_client,
     login,
@@ -209,5 +210,69 @@ async def test_successful_login_resets_account_failure_count(
         client,
         email,
         password=PASSWORD,
+    )
+    assert response.status_code == 429
+
+
+@pytest.mark.asyncio
+async def test_account_reset_across_different_client_ips(
+    auth_client,
+):
+    _, _, email = auth_client
+
+    async def attempt_from_ip(
+        ip: str,
+        password: str,
+    ):
+        transport = httpx.ASGITransport(
+            app=app,
+            client=(ip, 50000),
+        )
+
+        async with httpx.AsyncClient(
+            transport=transport,
+            base_url="https://localhost",
+        ) as client:
+            return await login(
+                client,
+                email,
+                password=password,
+            )
+
+    # Four failures from IP A.
+    for _ in range(4):
+        response = await attempt_from_ip(
+            "192.0.2.10",
+            "IncorrectPassword123!",
+        )
+        assert response.status_code == 401
+
+    # Successful login from IP B resets account failures.
+    response = await attempt_from_ip(
+        "192.0.2.20",
+        PASSWORD,
+    )
+    assert response.status_code == 200
+
+    # Four more failures from IP C.
+    for _ in range(4):
+        response = await attempt_from_ip(
+            "192.0.2.30",
+            "IncorrectPassword123!",
+        )
+        assert response.status_code == 401
+
+    # Fifth failure after reset is accepted.
+    response = await attempt_from_ip(
+        "192.0.2.40",
+        "IncorrectPassword123!",
+    )
+    assert response.status_code == 401
+
+    # Next attempt must be blocked by account limit,
+    # even though it comes from a different IP.
+    response = await attempt_from_ip(
+        "192.0.2.50",
+        PASSWORD,
     )
     assert response.status_code == 429

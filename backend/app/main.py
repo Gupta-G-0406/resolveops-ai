@@ -12,7 +12,8 @@ from app.api.investigations import (
     router as investigations_router,
     history_router,
 )
-
+from app.api.auth import router as auth_router
+from app.core.config import settings
 from app.mcp.client_tools import (
     mcp_client,
     MCPConnectionError,
@@ -101,10 +102,11 @@ app.include_router(tickets_router)
 app.include_router(orders_router)
 app.include_router(investigations_router)
 app.include_router(history_router)
+app.include_router(auth_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=settings.auth_allowed_origins,
     allow_credentials=True,   #Permits the frontend to send sensitive credentials
     allow_methods=["*"], #Grants permission for all standard HTTP methods (GET, POST, PUT, DELETE, etc.).
     allow_headers=["*"], #Permits all custom or standard HTTP headers to be sent in the requests.
